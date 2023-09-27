@@ -30,23 +30,23 @@
         return data.valid;
     }
 
+    const response = await fetch('/generateToken');
+    const dataToken = await response.json();
+
     async function openClaimSite() {
 
         const isValid = await validateClient(hostname, partnerId);
 
         if (isValid) {
-        const response = await fetch('/generateToken');
-        const data = await response.json();
+            if (dataToken.jwt) {
+                const encodedJwt = encodeURIComponent(data.jwt);
 
-        if (data.jwt) {
-            const encodedJwt = encodeURIComponent(data.jwt);
+                const claimSiteUrl = `https://mocaverse.com/claim?PartnerToken=${encodedJwt}`;
 
-            const claimSiteUrl = `https://mocaverse.com/claim?PartnerToken=${encodedJwt}`;
-
-            window.open(claimSiteUrl, '_blank');
-        } else {
-            console.error('JWT not available.');
-        }
+                window.open(claimSiteUrl, '_blank');
+            } else {
+                console.error('JWT not available.');
+            }
         } else {
         console.error('Invalid hostname or partner ID.');
         }
